@@ -70,6 +70,9 @@ web_modules/
 .env.*
 !.env.example
 
+# Local environment variables (for API keys, secrets, etc.)
+.env.local
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
