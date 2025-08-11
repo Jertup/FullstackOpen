@@ -1,0 +1,24 @@
+DELETE http://localhost:3001/api/persons/1
+### valid
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "number": "123-456789"
+}
+### missing name
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "number": "123-456789"
+}
+### dupe name
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Arto Hellas",
+  "number": "999-999999"
+}
