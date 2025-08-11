@@ -1,0 +1,44 @@
+{
+  "notes": [
+    {
+      "id": "1",
+      "content": "HTML is easy",
+      "important": false
+    },
+    {
+      "id": "2",
+      "content": "Browser can execute only JavaScript",
+      "important": false
+    },
+    {
+      "id": "3",
+      "content": "GET and POST are the most important methods of HTTP protocol",
+      "important": true
+    },
+    {
+      "id": "4",
+      "content": "React makes it painless to create interactive UIs",
+      "important": false
+    },
+    {
+      "id": "5",
+      "content": "Component-based architecture is a key feature of React",
+      "important": true
+    },
+    {
+      "id": "6f5c",
+      "content": "test",
+      "important": true
+    },
+    {
+      "id": "4536",
+      "content": "test2",
+      "important": false
+    },
+    {
+      "id": "0db6",
+      "content": "test4",
+      "important": false
+    }
+  ]
+}
