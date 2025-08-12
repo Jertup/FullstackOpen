@@ -4,9 +4,13 @@ const morgan = require('morgan');
 // Custom token to log POST request body
 morgan.token('body', (req) => req.method === 'POST' ? JSON.stringify(req.body) : '');
 
+
 const app = express();
 app.use(express.json());
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'dist')));
 
 let persons = [
 	{ id: 1, name: 'Arto Hellas', number: '040-123456' },
