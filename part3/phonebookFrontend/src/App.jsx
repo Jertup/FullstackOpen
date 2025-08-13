@@ -95,9 +95,13 @@ import './index.css'
               setNewNumber('');
             })
             .catch(error => {
-              setMessage(`Information of ${existingPerson.name} has already been deleted from server`);
               setMessageType('error');
-              setTimeout(() => setMessage(null), 3000);
+              if (error.response && error.response.data && error.response.data.error) {
+                setMessage(error.response.data.error);
+              } else {
+                setMessage(`Information of ${existingPerson.name} has already been deleted from server`);
+              }
+              setTimeout(() => setMessage(null), 5000);
               setPersons(persons.filter(person => person.id !== existingPerson.id));
             });
         }
@@ -122,6 +126,15 @@ import './index.css'
           setNewName('');
           setNewNumber('');
         })
+        .catch(error => {
+          setMessageType('error');
+          if (error.response && error.response.data && error.response.data.error) {
+            setMessage(error.response.data.error);
+          } else {
+            setMessage('An unexpected error occurred');
+          }
+          setTimeout(() => setMessage(null), 5000);
+        });
     }
     const handleDelete = (id) => {
       const person = persons.find(p => p.id === id);
