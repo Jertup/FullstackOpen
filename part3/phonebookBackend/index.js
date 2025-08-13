@@ -1,3 +1,4 @@
+/* global process __dirname */
 require('dotenv').config()
 const express = require('express');
 const morgan = require('morgan');
@@ -45,6 +46,7 @@ app.delete('/api/persons/:id', (request, response) => {
     .then(() => {
       response.status(204).end();
     })
+    // eslint-disable-next-line no-unused-vars
     .catch(error => {
       response.status(400).send({ error: 'malformatted id' });
     });

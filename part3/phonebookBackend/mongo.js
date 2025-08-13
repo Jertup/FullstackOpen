@@ -1,3 +1,4 @@
+/* global process */
 const mongoose = require('mongoose')
 
 if (process.argv.length < 3) {
@@ -34,6 +35,7 @@ if (!name && !number) {
     name: name,
     number: number,
   })
+  // eslint-disable-next-line no-unused-vars
   person.save().then(result => {
     console.log('person saved!')
     mongoose.connection.close()
