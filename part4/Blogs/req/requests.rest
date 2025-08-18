@@ -1,0 +1,31 @@
+DELETE http://localhost:3003/api/blogs/1
+### valid
+GET http://localhost:3003/api/blogs
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "My Blog Post",
+  "author": "John Doe",
+  "url": "http://example.com/my-blog-post",
+  "likes": 5
+}
+### missing author
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "My Blog Post",
+  "url": "http://example.com/my-blog-post",
+  "likes": 5
+}
+### dupe author
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "author": "Arto Hellas",
+  "url": "http://example.com/my-blog-post",
+  "likes": 5
+}
