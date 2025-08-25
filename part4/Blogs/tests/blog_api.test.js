@@ -7,6 +7,7 @@ const Blog = require('../models/blog')
 
 const api = supertest(app)
 
+
 const initialBlogs = [
   {
     title: 'My Blog Post',
@@ -22,11 +23,29 @@ const initialBlogs = [
   }
 ]
 
+let token = ''
+
+
+const User = require('../models/user')
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  let blogObject = new Blog(initialBlogs[0])
+  await User.deleteMany({})
+  // Create and login user for token
+  const newUser = {
+    username: 'testuser',
+    name: 'Test User',
+    password: 'testpass'
+  }
+  await api.post('/api/users').send(newUser)
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: newUser.username, password: newUser.password })
+  token = loginResponse.body.token
+  // Add initial blogs with user
+  let blogObject = new Blog({ ...initialBlogs[0], user: loginResponse.body.id })
   await blogObject.save()
-  blogObject = new Blog(initialBlogs[1])
+  blogObject = new Blog({ ...initialBlogs[1], user: loginResponse.body.id })
   await blogObject.save()
 })
 test('blogs are returned as json', async () => {
@@ -58,6 +77,7 @@ test('a valid blog can be added ', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -80,6 +100,7 @@ test('blog without title is not added', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(400)
 
@@ -111,6 +132,7 @@ test('blog without likes property defaults likes to 0', async () => {
 
   const response = await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -125,6 +147,7 @@ test('blog without title is not added and returns 400', async () => {
   }
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(400)
 })
@@ -136,6 +159,7 @@ test('blog without url is not added and returns 400', async () => {
   }
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(400)
 })
@@ -147,11 +171,13 @@ test('delete blog by id', async () => {
 
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', `Bearer ${token}`)
     .expect(204)
 
   const updatedResponse = await api.get('/api/blogs')
   assert.strictEqual(updatedResponse.body.length, initialBlogs.length - 1)
 })
+
 
 test('edit likes on a blog', async () => {
   const response = await api.get('/api/blogs')
@@ -169,6 +195,37 @@ test('edit likes on a blog', async () => {
     .expect('Content-Type', /application\/json/)
 
   assert.strictEqual(editResponse.body.likes, blogToEdit.likes + 1)
+})
+
+// --- TOKEN TEST ---
+test('a blog can be added only with a valid token and creator is set', async () => {
+  await User.deleteMany({})
+  const newUser = {
+    username: 'testuser',
+    name: 'Test User',
+    password: 'testpass'
+  }
+  await api.post('/api/users').send(newUser)
+
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: newUser.username, password: newUser.password })
+  const token = loginResponse.body.token
+
+  const newBlog = {
+    title: 'Token Blog',
+    author: 'Token Author',
+    url: 'https://example.com/token-blog',
+    likes: 5
+  }
+  const response = await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  assert.strictEqual(response.body.user.username, newUser.username)
 })
 
 after(async () => {

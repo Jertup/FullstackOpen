@@ -1,15 +1,15 @@
 DELETE http://localhost:3003/api/blogs/1
-### valid
+### get all
 GET http://localhost:3003/api/blogs
-###
+### valid request
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "My Blog Post",
+  "title": "My Blog Post2",
   "author": "John Doe",
   "url": "http://example.com/my-blog-post",
-  "likes": 5
+  "likes": 10
 }
 ### missing author
 POST http://localhost:3003/api/blogs
@@ -28,4 +28,15 @@ Content-Type: application/json
   "author": "Arto Hellas",
   "url": "http://example.com/my-blog-post",
   "likes": 5
+}
+### get all users
+GET http://localhost:3003/api/users
+### add new user
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "testUser2",
+  "name": "Tup Jer",
+  "password": "securepassword"
 }
