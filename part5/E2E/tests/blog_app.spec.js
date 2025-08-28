@@ -180,29 +180,30 @@ describe('Blog app', () => {
       await expect(page.getByText('a new blog Blog to notLike by Test Author2 added')).toBeVisible()
 
       // Like the first blog 2 times
-      await page.locator('.blog-title-author')
-      .filter({ hasText: "E2E Testing with Playwright by Playwright"})
-      .getByRole('button', { name: 'view' }).click()
-      await page.getByRole('button', { name: 'like'}).click()
-      await expect(page.getByText('Likes: 1')).toBeVisible()
-      await page.getByRole('button', { name: 'like'}).click()
-      await expect(page.getByText('Likes: 2')).toBeVisible()
-      await page.getByRole('button', { name: 'hide' }).click()
+      // Function to like a blog multiple times
+      const likeBlog = async (blogTitle, numberOfLikes) => {
+        await page.locator('.blog-title-author')
+          .filter({ hasText: blogTitle })
+          .getByRole('button', { name: 'view' }).click()
+        
+        for (let i = 1; i <= numberOfLikes; i++) {
+          await page.getByRole('button', { name: 'like' }).click()
+          await expect(page.getByText(`Likes: ${i}`)).toBeVisible()
+        }
+        
+        await page.getByRole('button', { name: 'hide' }).click()
+      }
+
+      // Like the first blog 2 times
+      await likeBlog("E2E Testing with Playwright by Playwright", 2)
 
       // Like the second blog 3 times
-      await page.locator('.blog-title-author')
-      .filter({ hasText: "Blog to like by Test Author"})
-      .getByRole('button', { name: 'view' }).click()
-      await page.getByRole('button', { name: 'like'}).click()
-      await expect(page.getByText('Likes: 1')).toBeVisible()
-      await page.getByRole('button', { name: 'like'}).click()
-      await expect(page.getByText('Likes: 2')).toBeVisible()
-      await page.getByRole('button', { name: 'like'}).click()
-      await expect(page.getByText('Likes: 3')).toBeVisible()
-      await page.getByRole('button', { name: 'hide' }).click()
+      await likeBlog("Blog to like by Test Author", 3)
 
-      // Verify that the blog with most likes appears first
-      await expect(page.locator('.blog-title-author').first()).toContainText('Blog to like by Test Author')
+      // Verify that the blogs are in order
+      await expect(page.locator('.blog-title-author').nth(0)).toContainText('Blog to like by Test Author')
+      await expect(page.locator('.blog-title-author').nth(1)).toContainText('E2E Testing with Playwright by Playwright')
+      await expect(page.locator('.blog-title-author').nth(2)).toContainText('Blog to notLike by Test Author2')
     })
 
   })
