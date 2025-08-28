@@ -129,6 +129,7 @@ const App = () => {
             blog={ { ...blog, handleLike, handleDelete }}
             visible={visibleComponent === `showBlog${blog.id}`}
             setVisible={setVisibleComponent}
+            currentUser={user}
           />
         )}
     </div>

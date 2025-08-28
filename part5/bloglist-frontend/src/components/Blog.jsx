@@ -1,4 +1,4 @@
-const Blog = ({ blog, visible, setVisible }) => {
+const Blog = ({ blog, visible, setVisible, currentUser }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -7,9 +7,12 @@ const Blog = ({ blog, visible, setVisible }) => {
     marginBottom: 5
   }
 
+  const showDeleteButton = currentUser && blog.user && 
+    (currentUser.username === blog.user.username || currentUser.id === blog.user.id)
+
   return (
     <div style={blogStyle}>
-      <div>
+      <div className="blog-title-author">
         {blog.title} by {blog.author}
         {visible ? (
           <button onClick={() => setVisible(null)}>hide</button>
@@ -18,14 +21,16 @@ const Blog = ({ blog, visible, setVisible }) => {
         )}
       </div>
       {visible && (
-        <div>
+        <div className="blog-details">
           <div>URL: {blog.url}</div>
           <div>
             Likes: {blog.likes}
             <button onClick={() => blog.handleLike(blog)}>like</button>
           </div>
           <div>Posted by: {blog.user?.name || 'Unknown'}</div>
-          <button onClick={() => blog.handleDelete(blog)}>Delete</button>
+          {showDeleteButton && (
+            <button onClick={() => blog.handleDelete(blog)}>Delete</button>
+          )}
         </div>
       )}
     </div>
