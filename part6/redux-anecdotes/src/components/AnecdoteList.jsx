@@ -1,19 +1,38 @@
 import { useSelector } from 'react-redux'
-import { voteAnecdote } from '../reducers/anecdoteReducer'
+import { useNotification } from '../contexts/NotificationContext'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import anecdoteService from '../../services/anecdotes'
 
-const AnecdoteList = ({ dispatch }) => {
-
-  const anecdotes = useSelector(state =>
-      [...state].sort((a, b) => b.votes - a.votes)
-  )
+const AnecdoteList = ({ anecdotes }) => {
+  const filter = useSelector(state => state.filter)
+  const { setNotification } = useNotification()
+  const queryClient = useQueryClient()
+  
+  const voteMutation = useMutation({
+    mutationFn: ({ id, updatedAnecdote }) => anecdoteService.update(id, updatedAnecdote),
+    onSuccess: (updatedAnecdote) => {
+      const anecdotes = queryClient.getQueryData(['anecdotes'])
+      queryClient.setQueryData(['anecdotes'], anecdotes.map(anecdote =>
+        anecdote.id === updatedAnecdote.id ? updatedAnecdote : anecdote
+      ))
+    }
+  })
+  
+  const filteredAnecdotes = anecdotes
+    .filter(anecdote => anecdote.content.toLowerCase().includes(filter.toLowerCase()))
+    .sort((a, b) => b.votes - a.votes)
+  
   const vote = (id) => {
-    dispatch(voteAnecdote(id))
+    const anecdote = anecdotes.find(a => a.id === id)
+    const updatedAnecdote = { ...anecdote, votes: anecdote.votes + 1 }
+    voteMutation.mutate({ id, updatedAnecdote })
+    setNotification(`you voted '${anecdote.content}'`, 5000)
   }
 
   return (
     <>
       <h2>Anecdotes</h2>
-      {anecdotes.map(anecdote =>
+      {filteredAnecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}
