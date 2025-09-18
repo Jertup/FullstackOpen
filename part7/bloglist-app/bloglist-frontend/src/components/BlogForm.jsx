@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Form, Button, Card } from 'react-bootstrap';
 
 const BlogForm = ({ createBlog, visible, setVisible }) => {
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' });
@@ -18,53 +19,63 @@ const BlogForm = ({ createBlog, visible, setVisible }) => {
   return (
     <div>
       {visible ? (
-        <div>
-          <h2>Create a new Blog</h2>
-          <form onSubmit={addBlog}>
-            <div>
-              <label>
-                Title
-                <input
+        <Card className="mb-4">
+          <Card.Header>
+            <h2 className="mb-0">Create a new Blog</h2>
+          </Card.Header>
+          <Card.Body>
+            <Form onSubmit={addBlog}>
+              <Form.Group className="mb-3">
+                <Form.Label>Title</Form.Label>
+                <Form.Control
                   type="text"
                   value={newBlog.title}
                   onChange={(event) =>
                     setNewBlog({ ...newBlog, title: event.target.value })
                   }
                 />
-              </label>
-            </div>
-            <div>
-              <label>
-                Author
-                <input
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Author</Form.Label>
+                <Form.Control
                   type="text"
                   value={newBlog.author}
                   onChange={(event) =>
                     setNewBlog({ ...newBlog, author: event.target.value })
                   }
                 />
-              </label>
-            </div>
-            <div>
-              <label>
-                URL
-                <input
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>URL</Form.Label>
+                <Form.Control
                   type="text"
                   value={newBlog.url}
                   onChange={(event) =>
                     setNewBlog({ ...newBlog, url: event.target.value })
                   }
                 />
-              </label>
-            </div>
-            <button type="submit">Add Blog</button>
-            <button type="button" onClick={() => setVisible(null)}>
-              Cancel
-            </button>
-          </form>
-        </div>
+              </Form.Group>
+              <Button type="submit" variant="primary" className="me-2">
+                Add Blog
+              </Button>
+              <Button 
+                type="button" 
+                variant="secondary"
+                onClick={() => setVisible(null)}
+              >
+                Cancel
+              </Button>
+            </Form>
+          </Card.Body>
+        </Card>
       ) : (
-        <button onClick={() => setVisible('blogForm')}>New Blog</button>
+        <Button 
+          variant="success" 
+          onClick={() => setVisible('blogForm')}
+          className="mb-3"
+        >
+          New Blog
+        </Button>
       )}
     </div>
   );

@@ -8,6 +8,7 @@ blogsRouter.get('/', async (request, response) => {
     username: 1,
     name: 1,
     id: 1,
+    comments: 1
   });
   response.json(blogs);
 });
@@ -35,6 +36,18 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
       response.status(500).json({ error: 'Something went wrong' });
     }
   }
+});
+
+blogsRouter.post('/:id/comments', async (request, response, next) => {
+  const { text } = request.body;
+  if (!text) {
+    return response.status(400).json({ error: 'Comment text is required' });
+  }
+  const blog = await Blog.findById(request.params.id);
+
+  blog.comments = blog.comments.concat(text);
+  await blog.save();
+  response.status(201).json(blog);
 });
 
 blogsRouter.get('/:id', async (request, response) => {

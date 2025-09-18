@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Container, Alert, Button } from 'react-bootstrap';
 import { showNotification } from './redux/notificationSlice';
 import { showError } from './redux/errorSlice';
-import { initializeBlogs, createBlog, voteBlog, removeBlog } from './redux/blogSlice';
+import { initializeBlogs, createBlog, voteBlog, removeBlog, addComment } from './redux/blogSlice';
 import { setUser, clearUser } from './redux/userSlice';
 import Blog from './components/Blog';
 import BlogView from './components/BlogView';
@@ -17,7 +18,7 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [visibleComponent, setVisibleComponent] = useState(null);
-  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [selectedBlogId, setSelectedBlogId] = useState(null);
   const [currentView, setCurrentView] = useState('blogs');
   
   const blogs = useSelector(state => state.blogs);
@@ -25,6 +26,9 @@ const App = () => {
   const notification = useSelector(state => state.notification);
   const errorMessage = useSelector(state => state.error);
   const dispatch = useDispatch();
+
+  // Get the selected blog from Redux store based on selectedBlogId
+  const selectedBlog = selectedBlogId ? blogs.find(blog => blog.id === selectedBlogId) : null;
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
@@ -62,7 +66,7 @@ const App = () => {
     dispatch(clearUser());
     blogService.setToken(null);
     setCurrentView('blogs');
-    setSelectedBlog(null);
+    setSelectedBlogId(null);
   };
 
   const createBlogHandler = async (blogObject) => {
@@ -93,17 +97,26 @@ const App = () => {
     }
   };
 
+  const handleAddComment = async (blogId, comment) => {
+    try {
+      await dispatch(addComment(blogId, comment));
+      dispatch(showNotification('Comment added successfully!'));
+    } catch (error) {
+      dispatch(showError('Failed to add comment'));
+    }
+  };
+
   const handleBlogClick = (blog) => {
-    setSelectedBlog(blog);
+    setSelectedBlogId(blog.id);
   };
 
   const handleBackFromBlog = () => {
-    setSelectedBlog(null);
+    setSelectedBlogId(null);
   };
 
   const handleViewChange = (view) => {
     setCurrentView(view);
-    setSelectedBlog(null);
+    setSelectedBlogId(null);
     setVisibleComponent(null);
   };
 
@@ -147,8 +160,8 @@ const App = () => {
   );
 
   return (
-    <>
-      <h1>Blog app</h1>
+    <Container>
+      <h1 className="my-4">Blog app</h1>
       
       <Navigation 
         user={user}
@@ -158,45 +171,42 @@ const App = () => {
       />
 
       {notification && (
-        <div
-          style={{
-            color: 'green',
-            border: '1px solid green',
-            padding: '10px',
-            marginBottom: '10px',
-          }}
-        >
+        <Alert variant="success" className="mt-3">
           {notification}
-        </div>
+        </Alert>
       )}
       {errorMessage && (
-        <div
-          style={{
-            color: 'red',
-            border: '1px solid red',
-            padding: '10px',
-            marginBottom: '10px',
-          }}
-        >
+        <Alert variant="danger" className="mt-3">
           {errorMessage}
-        </div>
+        </Alert>
       )}
       
       {!user && (
-        <div>
+        <div className="mt-4">
           {visibleComponent === 'login' ? (
             <div>
               {loginForm()}
-              <button onClick={() => setVisibleComponent(null)}>Cancel</button>
+              <Button 
+                variant="secondary" 
+                className="mt-2"
+                onClick={() => setVisibleComponent(null)}
+              >
+                Cancel
+              </Button>
             </div>
           ) : (
-            <button onClick={() => setVisibleComponent('login')}>Login</button>
+            <Button 
+              variant="primary"
+              onClick={() => setVisibleComponent('login')}
+            >
+              Login
+            </Button>
           )}
         </div>
       )}
       
       {user && (
-        <div>
+        <div className="mt-4">
           {selectedBlog ? (
             <BlogView
               blog={selectedBlog}
@@ -204,6 +214,7 @@ const App = () => {
               onDelete={handleDelete}
               currentUser={user}
               onBack={handleBackFromBlog}
+              onAddComment={handleAddComment}
             />
           ) : (
             <>
@@ -213,7 +224,7 @@ const App = () => {
           )}
         </div>
       )}
-    </>
+    </Container>
   );
 };
 

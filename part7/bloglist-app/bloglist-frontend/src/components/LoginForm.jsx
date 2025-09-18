@@ -1,3 +1,5 @@
+import { Form, Button } from 'react-bootstrap';
+
 const LoginForm = ({
   handleSubmit,
   handleUsernameChange,
@@ -6,25 +8,27 @@ const LoginForm = ({
   password,
 }) => {
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-          Username
-          <input type="text" value={username} onChange={handleUsernameChange} />
-        </label>
-      </div>
-      <div>
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-        </label>
-      </div>
-      <button type="submit">Login</button>
-    </form>
+    <Form onSubmit={handleSubmit}>
+      <Form.Group className="mb-3">
+        <Form.Label>Username</Form.Label>
+        <Form.Control 
+          type="text" 
+          value={username} 
+          onChange={handleUsernameChange} 
+        />
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
+          type="password"
+          value={password}
+          onChange={handlePasswordChange}
+        />
+      </Form.Group>
+      <Button type="submit" variant="primary">
+        Login
+      </Button>
+    </Form>
   );
 };
 

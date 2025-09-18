@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Card, Button, Table, ListGroup, Spinner } from 'react-bootstrap';
 import usersService from '../services/users';
 
 const UserInfo = ({ showNotification, showError }) => {
@@ -33,40 +34,59 @@ const UserInfo = ({ showNotification, showError }) => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
   }
 
   // Show individual user view
   if (selectedUser) {
     return (
-      <div>
-        <h2>{selectedUser.name}</h2>
-        <button onClick={handleBackClick}>back</button>
-        <h3>added blogs</h3>
-        {selectedUser.blogs && selectedUser.blogs.length > 0 ? (
-          <ul>
-            {selectedUser.blogs.map(blog => (
-              <li key={blog.id}>
-                {blog.title} by {blog.author}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No blogs added yet</p>
-        )}
-      </div>
+      <Card>
+        <Card.Header>
+          <h2 className="mb-0">{selectedUser.name}</h2>
+          <Button 
+            variant="outline-secondary" 
+            size="sm" 
+            onClick={handleBackClick}
+            className="mt-2"
+          >
+            back
+          </Button>
+        </Card.Header>
+        <Card.Body>
+          <h3>added blogs</h3>
+          {selectedUser.blogs && selectedUser.blogs.length > 0 ? (
+            <ListGroup variant="flush">
+              {selectedUser.blogs.map(blog => (
+                <ListGroup.Item key={blog.id}>
+                  {blog.title} by {blog.author}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          ) : (
+            <p className="text-muted">No blogs added yet</p>
+          )}
+        </Card.Body>
+      </Card>
     );
   }
 
   // Show users list view
   return (
-    <div>
-      <h2>Users</h2>
-      {users.length === 0 ? (
-        <p>No users found</p>
-      ) : (
-        <div>
-          <table>
+    <Card>
+      <Card.Header>
+        <h2 className="mb-0">Users</h2>
+      </Card.Header>
+      <Card.Body>
+        {users.length === 0 ? (
+          <p className="text-muted">No users found</p>
+        ) : (
+          <Table striped hover>
             <thead>
               <tr>
                 <th></th>
@@ -77,27 +97,23 @@ const UserInfo = ({ showNotification, showError }) => {
               {users.map(user => (
                 <tr key={user.id}>
                   <td>
-                    <button 
+                    <Button 
+                      variant="link" 
                       onClick={() => handleUserClick(user)}
-                      style={{ 
-                        background: 'none', 
-                        border: 'none', 
-                        color: 'blue', 
-                        textDecoration: 'underline', 
-                        cursor: 'pointer' 
-                      }}
+                      className="p-0"
+                      style={{ textDecoration: 'none' }}
                     >
                       {user.name}
-                    </button>
+                    </Button>
                   </td>
                   <td>{user.blogs ? user.blogs.length : 0}</td>
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+          </Table>
+        )}
+      </Card.Body>
+    </Card>
   );
 };
 

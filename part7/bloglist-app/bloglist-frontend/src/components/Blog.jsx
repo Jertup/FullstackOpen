@@ -1,31 +1,20 @@
-const Blog = ({ blog, onBlogClick }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  };
+import { Card, Button } from 'react-bootstrap';
 
+const Blog = ({ blog, onBlogClick }) => {
   return (
-    <div style={blogStyle}>
-      <div className="blog-title-author">
-        <button 
+    <Card className="mb-2">
+      <Card.Body className="py-2">
+        <Button 
+          variant="link" 
           onClick={() => onBlogClick(blog)}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            color: 'blue', 
-            textDecoration: 'underline', 
-            cursor: 'pointer',
-            padding: 0,
-            font: 'inherit'
-          }}
+          className="p-0 text-start"
+          style={{ textDecoration: 'none' }}
         >
           {blog.title}
-        </button> by {blog.author}
-      </div>
-    </div>
+        </Button> 
+        <span className="text-muted"> by {blog.author}</span>
+      </Card.Body>
+    </Card>
   );
 };
 

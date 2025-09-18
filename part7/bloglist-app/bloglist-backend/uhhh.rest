@@ -1,0 +1,15 @@
+POST http://localhost:3003/api/blogs/68b01bdd5aefce8c2640f617/comments
+Content-Type: application/json
+
+{
+  "comment": "Great blog post! Learned a lot."
+}
+
+###
+
+POST http://localhost:3003/api/blogs/68b01bdd5aefce8c2640f617/comments
+Content-Type: application/json
+
+{
+  "text": "Thanks for sharing your insights."
+}
